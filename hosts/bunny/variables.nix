@@ -2,6 +2,9 @@
 # Variables
 
 {
+  # System User
+  username = "zephy";
+
   # Git Configuration ( For Pulling Software Repos )
   gitUsername = "logichaos";
   gitEmail = "logichaoscodes@gmail.com";

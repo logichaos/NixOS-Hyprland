@@ -2,6 +2,9 @@
 # Variables
 
 {
+  # System User
+  username = "default-user";  # Change this to your username
+
   # Git Configuration ( For Pulling Software Repos )
   gitUsername = "JaKooLit";
   gitEmail = "ejhay.games@gmail.com";

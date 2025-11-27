@@ -37,19 +37,15 @@
     }:
     let
       system = "x86_64-linux";
-      host = "bunny";
-      username = "zephy";
 
-      pkgs = import nixpkgs {
-        inherit system;
-        config = {
-          allowUnfree = true;
-        };
-      };
-    in
-    {
-      nixosConfigurations = {
-        "${host}" = nixpkgs.lib.nixosSystem rec {
+      # Helper function to create a NixOS configuration for a host
+      mkHost = host:
+        let
+          # Import the host's variables.nix to get the username
+          hostVars = import ./hosts/${host}/variables.nix;
+          username = hostVars.username;
+        in
+        nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit system;
             inherit inputs;
@@ -92,6 +88,17 @@
             }
           ];
         };
-      };
+
+      # Auto-discover all hosts from the hosts/ directory
+      hostNames = builtins.attrNames (
+        nixpkgs.lib.filterAttrs
+          (name: type: type == "directory")
+          (builtins.readDir ./hosts)
+      );
+
+    in
+    {
+      # Generate nixosConfigurations for each discovered host
+      nixosConfigurations = nixpkgs.lib.genAttrs hostNames mkHost;
     };
 }
