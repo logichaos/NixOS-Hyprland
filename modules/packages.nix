@@ -117,6 +117,8 @@
     gsettings-qt
     git
     google-chrome
+    vivaldi
+    vivaldi-ffmpeg-codecs
     gnome-system-monitor
     fastfetch
     jq
