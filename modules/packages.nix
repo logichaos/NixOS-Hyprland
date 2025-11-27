@@ -245,6 +245,11 @@
     # Terminals
     kitty
     wezterm
+    
+    # Password
+    pass
+    keepassxc
+    gpg-tui
 
   ];
   environment.variables = {
