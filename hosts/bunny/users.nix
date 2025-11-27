@@ -27,13 +27,15 @@ in
       # define user packages here
       packages = with pkgs; [
         thunderbird
+        nix-zsh-completions
+        fish
       ];
     };
 
     defaultUserShell = pkgs.zsh;
   };
 
-  environment.shells = with pkgs; [ zsh ];
+  environment.shells = with pkgs; [ zsh fish ];
   environment.systemPackages = with pkgs; [ lsd fzf git ];
   programs = {
     zsh = {
