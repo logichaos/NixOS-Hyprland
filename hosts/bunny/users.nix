@@ -7,7 +7,7 @@ let
   inherit (import ./variables.nix) gitUsername;
 in
 {
-  users = { 
+  users = {
     mutableUsers = true;
     users."${username}" = {
       homeMode = "755";
@@ -19,22 +19,23 @@ in
         "libvirtd"
         "scanner"
         "lp"
-        "video" 
-        "input" 
+        "video"
+        "input"
         "audio"
       ];
 
-    # define user packages here
-    packages = with pkgs; [
+      # define user packages here
+      packages = with pkgs; [
+        thunderbird
       ];
     };
-    
+
     defaultUserShell = pkgs.zsh;
-  }; 
-  
+  };
+
   environment.shells = with pkgs; [ zsh ];
-  environment.systemPackages = with pkgs; [ lsd fzf git ]; 
-   programs = {
+  environment.systemPackages = with pkgs; [ lsd fzf git ];
+  programs = {
     zsh = {
       ohMyZsh = {
         enable = true;

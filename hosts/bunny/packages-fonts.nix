@@ -20,6 +20,16 @@ in
     (with pkgs; [
       # System Packages
       fastfetch
+      # fonts
+      nerd-fonts.iosevka
+      nerd-fonts.hack
+      nerd-fonts.lilex
+      nerd-fonts.victor-mono
+
+      # Dev
+      #vscode
+      #dotnetCorePackages.sdk_9_0-bin
+      #dotnetCorePackages.sdk_10_0-bin
     ])
     ++ [
       python-packages

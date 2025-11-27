@@ -3,8 +3,8 @@
 
 {
   # Git Configuration ( For Pulling Software Repos )
-  gitUsername = "JaKooLit";
-  gitEmail = "ejhay.games@gmail.com";
+  gitUsername = "logichaos";
+  gitEmail = "logichaoscodes@gmail.com";
 
   # Hyprland Settings
   extraMonitorSettings = "";

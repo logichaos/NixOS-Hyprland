@@ -1,12 +1,11 @@
 # 💫 https://github.com/JaKooLit 💫 #
 # Main default config
 
-{
-  pkgs,
-  host,
-  username,
-  options,
-  ...
+{ pkgs
+, host
+, username
+, options
+, ...
 }:
 let
 
@@ -113,7 +112,7 @@ in
 
   # Extra Module Options
   drivers = {
-    amdgpu.enable = true;
+    amdgpu.enable = false;
     intel.enable = true;
     nvidia.enable = false;
     nvidia-prime = {
