@@ -12,6 +12,7 @@ in {
 	home.packages = with pkgs; [
 		dotnet10Wrapper
         dotnet10
+        jetbrains.rider
 	];
 
 }
