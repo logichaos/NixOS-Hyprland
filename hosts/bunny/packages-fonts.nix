@@ -26,9 +26,7 @@ in
       nerd-fonts.lilex
       nerd-fonts.victor-mono
 
-      # Dev
-      dotnetCorePackages.sdk_9_0-bin
-      dotnetCorePackages.sdk_10_0-bin
+
     ])
     ++ [
       python-packages
