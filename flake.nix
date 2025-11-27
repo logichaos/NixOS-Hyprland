@@ -29,8 +29,6 @@
 
   };
 
-
-
   outputs =
     inputs@{ self
     , nixpkgs
@@ -84,7 +82,7 @@
               home-manager.users.${username} = {
                 home.username = username;
                 home.homeDirectory = "/home/${username}";
-                home.stateVersion = "24.05";
+                home.stateVersion = "25.05";
 
                 # Import your copied HM modules
                 imports = [
