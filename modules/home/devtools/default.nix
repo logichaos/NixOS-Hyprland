@@ -13,6 +13,10 @@ in {
 		dotnet10Wrapper
         dotnet10
         jetbrains.rider
+        podman
+        podman-tui
+        podman-desktop
+        podman-compose
 	];
 
 }
