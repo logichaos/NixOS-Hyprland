@@ -9,7 +9,7 @@
 }:
 let
 
-  inherit (import ./variables.nix) keyboardLayout;
+  inherit (import ./variables.nix) keyboardLayout keyboardVariant;
 
 in
 {
@@ -157,7 +157,7 @@ in
       enable = false;
       xkb = {
         layout = "${keyboardLayout}";
-        variant = "";
+        variant = "${keyboardVariant}";
       };
     };
 
