@@ -13,6 +13,7 @@ in
       homeMode = "755";
       isNormalUser = true;
       description = "${gitUsername}";
+      shell = pkgs.fish;
       extraGroups = [
         "networkmanager"
         "wheel"
@@ -27,15 +28,17 @@ in
       # define user packages here
       packages = with pkgs; [
         thunderbird
+        fish
       ];
     };
 
-    defaultUserShell = pkgs.zsh;
+    defaultUserShell = pkgs.fish;
   };
 
-  environment.shells = with pkgs; [ zsh ];
+  environment.shells = with pkgs; [ zsh fish ];
   environment.systemPackages = with pkgs; [ lsd fzf git ];
   programs = {
+    fish.enable = true;
     zsh = {
       ohMyZsh = {
         enable = true;

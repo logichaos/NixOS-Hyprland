@@ -97,6 +97,7 @@
     distrobox
     dua
     duf
+    usbutils
     cava
     cargo
     clang
@@ -245,7 +246,7 @@
     # Terminals
     kitty
     wezterm
-    
+
     # Password
     pass
     keepassxc
