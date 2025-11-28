@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./devtools/default.nix
+    ./devtools
     ./terminals/tmux.nix
     ./terminals/ghostty.nix
     ./editors/nixvim.nix
