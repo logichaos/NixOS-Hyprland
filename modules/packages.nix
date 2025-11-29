@@ -175,6 +175,10 @@
     yad
     yazi
     yt-dlp
+    dnslookup
+    dig
+    traceroute
+    tparted
 
     (inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default)
     (inputs.ags.packages.${pkgs.stdenv.hostPlatform.system}.default)
