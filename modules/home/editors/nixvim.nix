@@ -74,6 +74,9 @@ in
       # Fuzzy finder
       telescope.enable = true;
 
+      # Plenary (dependency for telescope and easy-dotnet)
+      plenary-nvim.enable = true;
+
       # Treesitter for syntax/TS features
       treesitter.enable = true;
       treesitter-context.enable = false;
@@ -127,6 +130,42 @@ in
 
       # Markdown preview
       markdown-preview.enable = true;
+
+      # Debug Adapter Protocol (DAP) for debugging
+      dap = {
+        enable = true;
+        extensions = {
+          dap-ui.enable = true;
+          dap-virtual-text.enable = true;
+        };
+      };
+
+      # .NET Development Plugin
+      easy-dotnet = {
+        enable = true;
+        settings = {
+          # Use telescope as the picker
+          picker = "telescope";
+          
+          # Enable built-in Roslyn LSP for C#
+          lsp = {
+            enabled = true;
+            roslynator_enabled = true;
+          };
+          
+          # Debugger configuration for netcoredbg
+          debugger = {
+            auto_register_dap = true;
+            # bin_path will auto-discover netcoredbg from PATH
+          };
+          
+          # Terminal settings
+          terminal = {
+            dotnet_cmd = "dotnet";
+            use_file_watcher = true;
+          };
+        };
+      };
 
       # Completion and snippets
       cmp = {
@@ -278,6 +317,51 @@ in
         action = "<Nop>";
         options.desc = "Disable accidental F1 help";
       }
+      
+      # .NET Development with easy-dotnet
+      {
+        key = "<leader>nb";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').build()<CR>";
+        options.desc = ".NET: Build solution";
+      }
+      {
+        key = "<leader>nr";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').run()<CR>";
+        options.desc = ".NET: Run project";
+      }
+      {
+        key = "<leader>nt";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').test()<CR>";
+        options.desc = ".NET: Run tests";
+      }
+      {
+        key = "<leader>nd";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').debug()<CR>";
+        options.desc = ".NET: Debug project";
+      }
+      {
+        key = "<leader>np";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').package()<CR>";
+        options.desc = ".NET: Manage NuGet packages";
+      }
+      {
+        key = "<leader>ns";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').secrets()<CR>";
+        options.desc = ".NET: Manage user secrets";
+      }
+      {
+        key = "<leader>nc";
+        mode = [ "n" ];
+        action = "<cmd>lua require('easy-dotnet').clean()<CR>";
+        options.desc = ".NET: Clean solution";
+      }
+      
       # Help mappings
       {
         key = "<leader>h";
