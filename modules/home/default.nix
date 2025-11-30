@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -19,5 +19,11 @@
     ./yazi
   ];
 
+  programs.home-manager.enable = true;
+  
+  # Add home-manager CLI
+  home.packages = with pkgs; [
+    home-manager
+  ];
 }
 
