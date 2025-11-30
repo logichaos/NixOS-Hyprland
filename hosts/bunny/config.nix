@@ -6,12 +6,8 @@
 , options
 , ...
 }:
-let
-
-  inherit (import ./variables.nix) keyboardLayout keyboardVariant;
-
-in
 {
+
   imports = [
     ./hardware.nix
     ./users.nix
@@ -155,8 +151,8 @@ in
     xserver = {
       enable = false;
       xkb = {
-        layout = "${keyboardLayout}";
-        variant = "${keyboardVariant}";
+        layout = "us";
+        variant = "";
       };
     };
 

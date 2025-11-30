@@ -4,8 +4,4 @@
 {
   # Hyprland Settings
   extraMonitorSettings = "";
-
-  # Keyboard Layout (host-specific)
-  keyboardLayout = "us";
-  keyboardVariant = "altgr-intl";
 }

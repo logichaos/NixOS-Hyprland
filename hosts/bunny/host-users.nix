@@ -5,4 +5,5 @@
 # Each user should have a corresponding directory in ../../users/<username>/
 [
   "zephy"
+  "tasty"
 ]

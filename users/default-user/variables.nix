@@ -1,6 +1,3 @@
-# 💫 https://github.com/JaKooLit 💫 #
-# User-specific variables for default-user (template)
-
 {
   # Git Configuration
   gitUsername = "noneset";
@@ -10,9 +7,13 @@
   browser = "vivaldi"; # Set Default Browser (google-chrome-stable for google-chrome)
   terminal = "kitty"; # Set Default System Terminal
   
+  # Keyboard Settings
+  keyboardLayout = "us";
+  keyboardVariant = "altgr-intl";
+  
   # Waybar Settings
   clock24h = true;
   
   # default shell
-  shell = "fish"
+  shell = "fish";
 }

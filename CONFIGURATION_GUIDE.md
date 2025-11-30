@@ -35,6 +35,32 @@ NixOS-Hyprland/
 
 ## 🏠 How to Add a New Host
 
+### Method 1: Using the Installer Script (Recommended)
+
+Run the interactive installer script which automates the entire process:
+
+```bash
+./install.sh
+```
+
+The installer will:
+- ✅ Prompt for a new hostname (or use "default")
+- ✅ Create the host directory with template files
+- ✅ Detect and configure GPU drivers automatically (NVIDIA, AMD, Intel, or VM)
+- ✅ Set up keyboard layout and variant
+- ✅ Configure timezone and console keymap
+- ✅ Create user directory from `default-user` template
+- ✅ Configure git username and email for the user
+- ✅ Generate hardware configuration automatically
+- ✅ Build and switch to the new configuration
+- ✅ Install Hyprland dotfiles and GTK themes
+
+**Note:** The installer creates everything needed for a complete system setup, including user configuration.
+
+### Method 2: Manual Setup
+
+If you prefer manual configuration or are adding a host to an existing system:
+
 1. **Create a new host directory:**
    ```bash
    mkdir -p hosts/myhost
@@ -42,12 +68,12 @@ NixOS-Hyprland/
 
 2. **Copy template files from an existing host:**
    ```bash
-   cp hosts/bunny/* hosts/myhost/
+   cp hosts/default/* hosts/myhost/
    ```
 
 3. **Edit the host configuration files:**
    - `config.nix` - Main system configuration
-   - `hardware.nix` - Hardware settings (run `nixos-generate-config` and copy relevant parts)
+   - `hardware.nix` - Hardware settings (run `nixos-generate-config --show-hardware-config > hosts/myhost/hardware.nix`)
    - `host-users.nix` - List users to enable on this host:
      ```nix
      [

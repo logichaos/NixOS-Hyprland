@@ -51,6 +51,12 @@ in
     programs.home-manager.enable = true;
     
     home.packages = userPackages;
+    
+    # Keyboard settings for this user (Wayland/Hyprland)
+    home.sessionVariables = {
+      XKB_DEFAULT_LAYOUT = vars.keyboardLayout or "us";
+      XKB_DEFAULT_VARIANT = vars.keyboardVariant or "";
+    };
   };
 
   # Optional path to user dot overrides (used by link-dots)
