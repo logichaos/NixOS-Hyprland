@@ -1,17 +1,34 @@
 # 💫 https://github.com/JaKooLit 💫 #
-# Common Home Manager configuration shared across all users
+# Common fallback for single-entry user configuration
 
-{ config, pkgs, lib, ... }:
-
+{ pkgs, username }:
 {
-  # Common configuration that applies to all users
-  # This is imported by every user's HM configuration
-  
-  # Common packages that all users should have
-  home.packages = with pkgs; [
-    # Add packages common to all users here
-  ];
-  
-  # Common program configurations
-  # These can be overridden in user-specific configs
+  account = {
+    homeMode = "755";
+    isNormalUser = true;
+    description = username;
+    shell = pkgs.fish;
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "scanner"
+      "lp"
+      "video"
+      "input"
+      "audio"
+    ];
+    packages = with pkgs; [ fish ];
+  };
+
+  home = {
+    home.username = username;
+    home.homeDirectory = "/home/${username}";
+    home.stateVersion = "25.11";
+    imports = [
+      ../../modules/home/default.nix
+    ];
+  };
+
+  dotsPath = null;
 }

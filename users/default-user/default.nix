@@ -1,19 +1,51 @@
 # 💫 https://github.com/JaKooLit 💫 #
-# Home Manager configuration for user: default-user (template)
+# Single-entry user configuration for: default-user (template)
 
-{ config, pkgs, lib, ... }:
+{ pkgs, username ? "default-user" }:
+let
+  vars = import ./variables.nix;
+  userPackages = if builtins.pathExists ./packages.nix
+    then (import ./packages.nix { pkgs = pkgs; })
+    else [];
 
+  shellPkg = if vars.shell or "fish" == "zsh" then pkgs.zsh
+             else if vars.shell or "fish" == "bash" then pkgs.bash
+             else pkgs.fish;
+in
 {
-  # User-specific Home Manager configuration
-  # This file can contain user-specific package installations,
-  # program configurations, or other HM settings that are unique to this user
-  
-  # Example: User-specific packages
-  home.packages = with pkgs; [
-    # Add user-specific packages here
-  ];
+  account = {
+    homeMode = "755";
+    isNormalUser = vars.isNormalUser or true;
+    description = vars.description or vars.gitUsername;
+    shell = shellPkg;
+    extraGroups = vars.extraGroups or [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "scanner"
+      "lp"
+      "video"
+      "input"
+      "audio"
+    ];
+    packages = userPackages;
+  };
 
-  # Example: User-specific program configurations
-  # programs.git.userName = "JaKooLit";
-  # programs.git.userEmail = "ejhay.games@gmail.com";
+  home = {
+    home.username = username;
+    home.homeDirectory = "/home/${username}";
+    home.stateVersion = "25.11";
+
+    imports = [
+      ../../modules/home/default.nix
+    ];
+
+    programs.git = {
+      enable = true;
+      userName = vars.gitUsername;
+      userEmail = vars.gitEmail;
+    };
+  };
+
+  dotsPath = ./dots;
 }

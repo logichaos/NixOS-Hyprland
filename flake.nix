@@ -41,30 +41,8 @@
       # Helper function to create a NixOS configuration for a host
       mkHost = host:
         let
-          # Import the list of users for this host
-          hostUsers = import ./hosts/${host}/host-users.nix;
-          
-          # Helper to create HM config for a single user
-          mkUserHMConfig = username: {
-            home.username = username;
-            home.homeDirectory = "/home/${username}";
-            home.stateVersion = "25.11";
-
-            # Import common HM modules, user-specific config, and common user config
-            imports = [
-              ./modules/home/default.nix      # Common programs (git, nvim, etc.) and dot-file linking
-              ./users/common/default.nix      # Shared across all users
-              ./users/${username}/default.nix # User-specific HM configuration
-            ];
-          };
-          
-          # Generate home-manager.users attrset for all users on this host
-          hmUsers = nixpkgs.lib.listToAttrs (
-            map (username: {
-              name = username;
-              value = mkUserHMConfig username;
-            }) hostUsers
-          );
+          # Host-specific modules will define home-manager.users and users.users
+          # based on per-user single-entry files.
         in
         nixpkgs.lib.nixosSystem {
           specialArgs = {
@@ -94,9 +72,6 @@
 
               # Ensure HM modules can access flake inputs
               home-manager.extraSpecialArgs = { inherit inputs system host; };
-
-              # Configure Home Manager for all users on this host
-              home-manager.users = hmUsers;
             }
           ];
         };

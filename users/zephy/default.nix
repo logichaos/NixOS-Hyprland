@@ -1,19 +1,59 @@
 # 💫 https://github.com/JaKooLit 💫 #
-# Home Manager configuration for user: zephy
+# Single-entry user configuration for: zephy
 
-{ config, pkgs, lib, ... }:
+{ pkgs, username ? "zephy" }:
+let
+  vars = import ./variables.nix;
+  userPackages = if builtins.pathExists ./packages.nix
+    then (import ./packages.nix { pkgs = pkgs; })
+    else [];
 
+  shellPkg = if vars.shell or "fish" == "zsh" then pkgs.zsh
+             else if vars.shell or "fish" == "bash" then pkgs.bash
+             else pkgs.fish;
+in
 {
-  # User-specific Home Manager configuration
-  # This file can contain user-specific package installations,
-  # program configurations, or other HM settings that are unique to this user
-  
-  # Example: User-specific packages
-  home.packages = with pkgs; [
-    # Add user-specific packages here
-  ];
+  # System account settings for this user
+  account = {
+    homeMode = "755";
+    isNormalUser = vars.isNormalUser or true;
+    description = vars.description or vars.gitUsername;
+    shell = shellPkg;
+    extraGroups = vars.extraGroups or [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "scanner"
+      "lp"
+      "video"
+      "input"
+      "audio"
+    ];
+    packages = userPackages;
+  };
 
-  # Example: User-specific program configurations
-  # programs.git.userName = "logichaos";
-  # programs.git.userEmail = "logichaoscodes@gmail.com";
+  # Home Manager configuration for this user
+  home = {
+    home.username = username;
+    home.homeDirectory = "/home/${username}";
+    home.stateVersion = "25.11";
+
+    # Include shared HM modules and enable overlay dotfiles
+    imports = [
+      ../../modules/home/default.nix
+    ];
+
+    # Bind git identity from variables
+    programs.git = {
+      enable = true;
+      userName = vars.gitUsername;
+      userEmail = vars.gitEmail;
+    };
+
+    # Example: preferences from variables
+    xdg.portal.enable = true;
+  };
+
+  # Optional path to user dot overrides (used by link-dots)
+  dotsPath = ./dots;
 }
