@@ -42,8 +42,10 @@ in
 
     programs.git = {
       enable = true;
-      userName = vars.gitUsername;
-      userEmail = vars.gitEmail;
+      settings.user = {
+        name = vars.gitUsername;
+        email = vars.gitEmail;
+      };
     };
   };
 

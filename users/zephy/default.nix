@@ -43,15 +43,14 @@ in
       ../../modules/home/default.nix
     ];
 
-    # Bind git identity from variables
+    # Bind git identity from variables (HM 26.05 schema)
     programs.git = {
       enable = true;
-      userName = vars.gitUsername;
-      userEmail = vars.gitEmail;
+      settings.user = {
+        name = vars.gitUsername;
+        email = vars.gitEmail;
+      };
     };
-
-    # Example: preferences from variables
-    xdg.portal.enable = true;
   };
 
   # Optional path to user dot overrides (used by link-dots)
