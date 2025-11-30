@@ -141,8 +141,47 @@ fi
 
 echo "-----"
 
+# Multi-user setup: prompt for username and create user directory
 installusername=$(echo $USER)
-sed -i 's/username\s*=\s*"\([^"]*\)"/username = "'"$installusername"'"/' ./flake.nix
+read -rp "$CAT Enter username for this system: [ $installusername ] " userName </dev/tty
+if [ -z "$userName" ]; then
+    userName="$installusername"
+fi
+
+echo "$NOTE Creating user directory and host-users configuration..."
+
+# Create host-users.nix with the username
+cat > "./hosts/$hostName/host-users.nix" <<EOF
+# Users enabled on this host
+[ "$userName" ]
+EOF
+
+# Create user directory if it doesn't exist (copy from default-user template)
+if [ ! -d "./users/$userName" ]; then
+    echo "$NOTE Creating user directory for $userName from template..."
+    mkdir -p "./users/$userName"
+    cp -r ./users/default-user/* "./users/$userName/"
+    
+    # Update variables.nix with git user info
+    read -rp "$CAT Enter git username: [ $userName ] " gitUsername </dev/tty
+    if [ -z "$gitUsername" ]; then
+        gitUsername="$userName"
+    fi
+    read -rp "$CAT Enter git email: [ $userName@example.com ] " gitEmail </dev/tty
+    if [ -z "$gitEmail" ]; then
+        gitEmail="$userName@example.com"
+    fi
+    
+    sed -i "s/gitUsername = \"[^\"]*\"/gitUsername = \"$gitUsername\"/" "./users/$userName/variables.nix"
+    sed -i "s/gitEmail = \"[^\"]*\"/gitEmail = \"$gitEmail\"/" "./users/$userName/variables.nix"
+    sed -i "s/description = \"[^\"]*\"/description = \"$gitUsername\"/" "./users/$userName/variables.nix"
+    
+    echo "$OK User $userName configured."
+else
+    echo "$OK User directory for $userName already exists."
+fi
+
+echo "-----"
 
 echo "$NOTE Generating The Hardware Configuration"
 attempts=0
@@ -173,11 +212,6 @@ echo "$NOTE Setting Required Nix Settings Then Going To Install"
 git config --global user.name $USER
 git config --global user.email "installer@gmail.com"
 git add .
-# Update host in flake.nix (first occurrence of host = "...")
-sed -i -E '0,/(^\s*host\s*=\s*")([^"]*)(";)/s//\1'"$hostName"'\3/' ./flake.nix
-# Verify
-echo "$OK Hostname updated in flake.nix:"
-grep -E "^[[:space:]]*host[[:space:]]*=" ./flake.nix | head -1 || true
 
 printf "\n%.0s" {1..2}
 
