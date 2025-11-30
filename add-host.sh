@@ -92,20 +92,7 @@ if type nhl_detect_gpu_and_toggle >/dev/null 2>&1; then
 fi
 echo "-----"
 
-read -rp "$CAT Enter your keyboard layout: [ us ] " keyboardLayout </dev/tty
-if [ -z "$keyboardLayout" ]; then
-    keyboardLayout="us"
-fi
-
-sed -i 's/keyboardLayout\s*=\s*"\([^"]*\)"/keyboardLayout = "'"$keyboardLayout"'"/' ./hosts/$hostName/variables.nix
-
-# Prompt for keyboard variant and save to variables.nix
-read -rp "$CAT Enter your keyboard variant: [ ] " keyboardVariant </dev/tty
-if [ -z "$keyboardVariant" ]; then
-    keyboardVariant=""
-fi
-
-sed -i 's/keyboardVariant\s*=\s*"\([^"]*\)"/keyboardVariant = "'"$keyboardVariant"'"/' ./hosts/$hostName/variables.nix
+keyboardLayout="us"
 
 # Timezone and console keymap
 if type nhl_prompt_timezone_console >/dev/null 2>&1; then
@@ -114,45 +101,115 @@ fi
 
 echo "-----"
 
-# Multi-user setup: prompt for username and create user directory
-installusername=$(echo $USER)
-read -rp "$CAT Enter username for this system: [ $installusername ] " userName </dev/tty
-if [ -z "$userName" ]; then
-    userName="$installusername"
+# Multi-user setup: list existing users and allow selection
+echo "$NOTE Listing existing users from 'users/' directory (excluding 'default-user' and 'common')..."
+
+# Get list of existing user directories
+existing_users=()
+while IFS= read -r -d '' dir; do
+    user=$(basename "$dir")
+    if [[ "$user" != "default-user" && "$user" != "common" ]]; then
+        existing_users+=("$user")
+    fi
+done < <(find users/ -mindepth 1 -maxdepth 1 -type d -print0)
+
+# Selection loop
+while true; do
+    # Present options
+    echo "$CAT Select users to add to this host (comma-separated numbers, e.g., 1,2 or '0' for new user):"
+    if [ ${#existing_users[@]} -gt 0 ]; then
+        for i in "${!existing_users[@]}"; do
+            echo "$((i+1)). ${existing_users[$i]}"
+        done
+    else
+        echo "$NOTE No existing users found."
+    fi
+    echo "0. Create new user"
+
+    # Read selection
+    read -rp "$CAT Enter your choices: " selection </dev/tty
+    selected_users=()
+    create_new=false
+    valid=true
+
+    # Parse selection
+    IFS=',' read -ra choices <<< "$selection"
+    for choice in "${choices[@]}"; do
+        choice=$(echo "$choice" | xargs)  # Trim whitespace
+        if [[ "$choice" == "0" || "$choice" == "new" ]]; then
+            create_new=true
+        elif [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le ${#existing_users[@]} ]; then
+            user="${existing_users[$((choice-1))]}"
+            if [[ ! " ${selected_users[*]} " =~ " ${user} " ]]; then
+                selected_users+=("$user")
+            fi
+        else
+            echo "$ERROR Invalid selection: $choice."
+            valid=false
+            break
+        fi
+    done
+
+    if [ "$valid" = true ]; then
+        break
+    fi
+done
+
+# If no valid selections and not creating new, default to create new
+if [ ${#selected_users[@]} -eq 0 ] && [ "$create_new" != true ]; then
+    echo "$NOTE No users selected. Defaulting to create a new user."
+    create_new=true
 fi
 
-echo "$NOTE Creating user directory and host-users configuration..."
+# Create host-users.nix
+echo "$NOTE Updating host-users.nix with selected users..."
+printf '[ ' > "./hosts/$hostName/host-users.nix"
+for user in "${selected_users[@]}"; do
+    printf '"%s" ' "$user" >> "./hosts/$hostName/host-users.nix"
+done
+printf ']\n' >> "./hosts/$hostName/host-users.nix"
 
-# Create host-users.nix with the username
-cat > "./hosts/$hostName/host-users.nix" <<EOF
-# Users enabled on this host
-[ "$userName" ]
-EOF
-
-# Create user directory if it doesn't exist (copy from default-user template)
-if [ ! -d "./users/$userName" ]; then
-    echo "$NOTE Creating user directory for $userName from template..."
-    mkdir -p "./users/$userName"
-    cp -r ./users/default-user/* "./users/$userName/"
-    
-    # Update variables.nix with git user info
-    read -rp "$CAT Enter git username: [ $userName ] " gitUsername </dev/tty
-    if [ -z "$gitUsername" ]; then
-        gitUsername="$userName"
+# Handle new user creation
+if [ "$create_new" = true ]; then
+    read -rp "$CAT Enter new username: " newUserName </dev/tty
+    if [ -z "$newUserName" ]; then
+        echo "$ERROR Username cannot be empty."
+        exit 1
     fi
-    read -rp "$CAT Enter git email: [ $userName@example.com ] " gitEmail </dev/tty
-    if [ -z "$gitEmail" ]; then
-        gitEmail="$userName@example.com"
+    if [ -d "./users/$newUserName" ]; then
+        echo "$WARN User directory for $newUserName already exists. Skipping creation."
+    else
+        echo "$NOTE Creating user directory for $newUserName from template..."
+        mkdir -p "./users/$newUserName"
+        cp -r ./users/default-user/* "./users/$newUserName/"
+        
+        # Prompt for git details
+        read -rp "$CAT Enter git username: [ $newUserName ] " gitUsername </dev/tty
+        if [ -z "$gitUsername" ]; then
+            gitUsername="$newUserName"
+        fi
+        read -rp "$CAT Enter git email: [ $newUserName@example.com ] " gitEmail </dev/tty
+        if [ -z "$gitEmail" ]; then
+            gitEmail="$newUserName@example.com"
+        fi
+        
+        # Update variables.nix
+        sed -i "s/gitUsername = \"[^\"]*\"/gitUsername = \"$gitUsername\"/" "./users/$newUserName/variables.nix"
+        sed -i "s/gitEmail = \"[^\"]*\"/gitEmail = \"$gitEmail\"/" "./users/$newUserName/variables.nix"
+        sed -i "s/description = \"[^\"]*\"/description = \"$gitUsername\"/" "./users/$newUserName/variables.nix"
+        
+        echo "$OK User $newUserName configured."
     fi
-    
-    sed -i "s/gitUsername = \"[^\"]*\"/gitUsername = \"$gitUsername\"/" "./users/$userName/variables.nix"
-    sed -i "s/gitEmail = \"[^\"]*\"/gitEmail = \"$gitEmail\"/" "./users/$userName/variables.nix"
-    sed -i "s/description = \"[^\"]*\"/description = \"$gitUsername\"/" "./users/$userName/variables.nix"
-    
-    echo "$OK User $userName configured."
-else
-    echo "$OK User directory for $userName already exists."
+    # Add new user to host-users.nix
+    if [ ${#selected_users[@]} -gt 0 ]; then
+        sed -i "s/]$/ \"$newUserName\" ]/" "./hosts/$hostName/host-users.nix"
+    else
+        printf '"%s" ' "$newUserName" >> "./hosts/$hostName/host-users.nix"
+        printf ']\n' >> "./hosts/$hostName/host-users.nix"
+    fi
 fi
+
+echo "$OK Host-users configuration updated."
 
 echo "-----"
 
