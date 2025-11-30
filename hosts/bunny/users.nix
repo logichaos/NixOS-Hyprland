@@ -7,34 +7,16 @@ let
   # Import the list of users for this host
   hostUsers = import ./host-users.nix;
   
-  # Helper function to create user configuration
+  # Helper function to load per-user account configuration
   mkUserConfig = username:
     let
-      userVars = import ../../users/${username}/variables.nix;
+      accountPath = ../../users/${username}/account.nix;
+      defaultAccount = ../../users/common/account-default.nix;
     in
-    {
-      homeMode = "755";
-      isNormalUser = true;
-      description = "${userVars.gitUsername}";
-      shell = pkgs.fish;
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "libvirtd"
-        "scanner"
-        "lp"
-        "video"
-        "input"
-        "audio"
-      ];
-
-      # define user packages here
-      packages = with pkgs; [
-        thunderbird
-        nix-zsh-completions
-        fish
-      ];
-    };
+      if builtins.pathExists accountPath then
+        (import accountPath { pkgs = pkgs; })
+      else
+        (import defaultAccount { pkgs = pkgs; });
   
   # Generate user configurations for all users
   userConfigs = lib.listToAttrs (
