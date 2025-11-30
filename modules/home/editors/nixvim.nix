@@ -14,6 +14,7 @@ in
 
   programs.nixvim = {
     enable = true;
+    nixpkgs.config.allowUnfree = true;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
@@ -74,8 +75,10 @@ in
       # Fuzzy finder
       telescope.enable = true;
 
-      # Plenary (dependency for telescope and easy-dotnet)
-      plenary-nvim.enable = true;
+      mini-notify = {
+        enable = true;
+        autoLoad = true;
+      };
 
       # Treesitter for syntax/TS features
       treesitter.enable = true;
@@ -132,13 +135,9 @@ in
       markdown-preview.enable = true;
 
       # Debug Adapter Protocol (DAP) for debugging
-      dap = {
-        enable = true;
-        extensions = {
-          dap-ui.enable = true;
-          dap-virtual-text.enable = true;
-        };
-      };
+      dap.enable = true;
+      dap-ui.enable = true;
+      dap-virtual-text.enable = true;
 
       # .NET Development Plugin
       easy-dotnet = {
@@ -227,6 +226,16 @@ in
             lsp_fallback = true;
           };
         };
+      };
+      
+      copilot-vim = {
+        enable = true;
+        autoLoad = true;
+      };
+      
+      copilot-chat = {
+        enable = true;
+        autoLoad = true;
       };
     };
 

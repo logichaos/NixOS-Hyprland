@@ -50,6 +50,9 @@ in
     
     programs.home-manager.enable = true;
     
+    # Allow unfree packages (needed for Copilot and other proprietary packages)
+    nixpkgs.config.allowUnfree = true;
+    
     home.packages = userPackages;
     
     # Keyboard settings for this user (Wayland/Hyprland)

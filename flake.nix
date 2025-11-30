@@ -57,7 +57,7 @@
             ./modules/quickshell.nix # quickshell module
             ./modules/packages.nix # Software packages
             # Allow broken packages (temporary fix for broken CUDA in nixos-unstable)
-            { nixpkgs.config.allowBroken = true; }
+            { nixpkgs.config = { allowBroken = true; allowUnfree = true; }; }
             ./modules/fonts.nix # Fonts packages
             ./modules/portals.nix # portal
             ./modules/theme.nix # Set dark theme
