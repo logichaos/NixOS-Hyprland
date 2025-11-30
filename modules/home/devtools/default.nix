@@ -12,11 +12,15 @@ in {
 	home.packages = with pkgs; [
 		dotnet10Wrapper
         dotnet10
+        netcoredbg
         jetbrains.rider
         podman
         podman-tui
         podman-desktop
         podman-compose
+        nodejs
+        ripgrep
+        fd
 	];
 
 }
