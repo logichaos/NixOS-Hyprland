@@ -1,6 +1,3 @@
-# 💫 https://github.com/JaKooLit 💫 #
-# Single-entry user configuration for: zephy
-
 { pkgs, username ? "zephy" }:
 let
   vars = import ./variables.nix;
@@ -8,8 +5,8 @@ let
     then (import ./packages.nix { pkgs = pkgs; })
     else [];
 
-  shellPkg = if vars.shell or "fish" == "zsh" then pkgs.zsh
-             else if vars.shell or "fish" == "bash" then pkgs.bash
+  shellPkg = if (vars.shell or "fish") == "zsh" then pkgs.zsh
+             else if (vars.shell or "fish") == "bash" then pkgs.bash
              else pkgs.fish;
 in
 {
@@ -29,7 +26,6 @@ in
       "input"
       "audio"
     ];
-    packages = userPackages;
   };
 
   # Home Manager configuration for this user
@@ -51,6 +47,10 @@ in
         email = vars.gitEmail;
       };
     };
+    
+    programs.home-manager.enable = true;
+    
+    home.packages = userPackages;
   };
 
   # Optional path to user dot overrides (used by link-dots)

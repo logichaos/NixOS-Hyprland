@@ -3,4 +3,5 @@
 with pkgs; [
   fish
   nix-zsh-completions
+  thunderbird
 ]
