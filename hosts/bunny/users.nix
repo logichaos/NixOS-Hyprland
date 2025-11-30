@@ -30,13 +30,12 @@ in
   users = {
     mutableUsers = true;
     users = lib.mapAttrs (_: spec: spec.account) userSpecs;
-    defaultUserShell = pkgs.fish;
   };
 
   # Wire Home Manager per-user configs from single-entry files
   home-manager.users = lib.mapAttrs (_: spec: spec.home) userSpecs;
 
-  environment.shells = with pkgs; [ zsh fish ];
+  environment.shells = with pkgs; [ zsh fish nushell bash ];
   environment.systemPackages = with pkgs; [ lsd fzf git ];
   programs = {
     fish.enable = true;

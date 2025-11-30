@@ -12,4 +12,7 @@
   
   # Waybar Settings
   clock24h = true;
+  
+  # default shell
+  shell = "fish"
 }
