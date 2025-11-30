@@ -20,6 +20,11 @@ in
     (with pkgs; [
       # System Packages
       fastfetch
+      nerd-fonts.iosevka
+      nerd-fonts.hack
+      nerd-fonts.lilex
+      nerd-fonts.victor-mono
+      vscode
     ])
     ++ [
       python-packages
