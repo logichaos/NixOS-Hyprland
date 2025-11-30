@@ -1,8 +1,8 @@
 {
-  description = "KooL's NixOS-Hyprland";
+  description = "Logichaos NixOS Setup, based on the one and only JaKooLit!!";
 
   inputs = {
-    #nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    #nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
