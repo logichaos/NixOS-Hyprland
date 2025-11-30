@@ -1,23 +1,11 @@
 # 💫 https://github.com/JaKooLit 💫 #
-# Variables
+# Host-specific variables for bunny
 
 {
-  # System User
-  username = "zephy";
-
-  # Git Configuration ( For Pulling Software Repos )
-  gitUsername = "logichaos";
-  gitEmail = "logichaoscodes@gmail.com";
-
   # Hyprland Settings
   extraMonitorSettings = "";
 
-  # Waybar Settings
-  clock24h = true;
-
-  # Program Options
-  browser = "firefox"; # Set Default Browser (google-chrome-stable for google-chrome)
-  terminal = "kitty"; # Set Default System Terminal
+  # Keyboard Layout (host-specific)
   keyboardLayout = "us";
   keyboardVariant = "altgr-intl";
 }

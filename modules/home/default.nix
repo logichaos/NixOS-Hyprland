@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./link-dots.nix         # Overlay dot-files from users/common/dots (+ user overrides)
     ./devtools
     ./terminals/tmux.nix
     ./terminals/ghostty.nix

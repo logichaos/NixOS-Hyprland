@@ -1,18 +1,21 @@
 # 💫 https://github.com/JaKooLit 💫 #
-# Users - NOTE: Packages defined on this will be on current user only
+# Users - Multi-user configuration
 
-{ pkgs, username, ... }:
+{ pkgs, lib, ... }:
 
 let
-  inherit (import ./variables.nix) gitUsername;
-in
-{
-  users = { 
-    mutableUsers = true;
-    users."${username}" = {
+  # Import the list of users for this host
+  hostUsers = import ./host-users.nix;
+  
+  # Helper function to create user configuration
+  mkUserConfig = username:
+    let
+      userVars = import ../../users/${username}/variables.nix;
+    in
+    {
       homeMode = "755";
       isNormalUser = true;
-      description = "${gitUsername}";
+      description = "${userVars.gitUsername}";
       shell = pkgs.fish;
       extraGroups = [
         "networkmanager"
@@ -30,7 +33,19 @@ in
         fish
       ];
     };
-    
+  
+  # Generate user configurations for all users
+  userConfigs = lib.listToAttrs (
+    map (username: {
+      name = username;
+      value = mkUserConfig username;
+    }) hostUsers
+  );
+in
+{
+  users = { 
+    mutableUsers = true;
+    users = userConfigs;
     defaultUserShell = pkgs.fish;
   }; 
   

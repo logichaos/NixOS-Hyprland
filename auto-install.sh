@@ -64,27 +64,27 @@ cd || exit
 
 echo "-----"
 
-backupname=$(date "+%Y-%m-%d-%H-%M-%S")
-if [ -d "NixOS-Hyprland" ]; then
-    echo "$NOTE NixOS-Hyprland exists, backing up to NixOS-Hyprland-backups directory."
-    if [ -d "NixOS-Hyprland-backups" ]; then
-        echo "Moving current version of NixOS-Hyprland to backups directory."
-        sudo mv "$HOME"/NixOS-Hyprland NixOS-Hyprland-backups/"$backupname"
-        sleep 1
-    else
-        echo "$NOTE Creating the backups directory & moving NixOS-Hyprland to it."
-        mkdir -p NixOS-Hyprland-backups
-        sudo mv "$HOME"/NixOS-Hyprland NixOS-Hyprland-backups/"$backupname"
-        sleep 1
-    fi
-else
-    echo "$OK Thank you for choosing KooL's NixOS-Hyprland"
-fi
-
-echo "-----"
-
-echo "$NOTE Cloning & Entering NixOS-Hyprland Repository"
-git clone --depth 1 https://github.com/JaKooLit/NixOS-Hyprland.git ~/NixOS-Hyprland
+# backupname=$(date "+%Y-%m-%d-%H-%M-%S")
+# if [ -d "NixOS-Hyprland" ]; then
+#     echo "$NOTE NixOS-Hyprland exists, backing up to NixOS-Hyprland-backups directory."
+#     if [ -d "NixOS-Hyprland-backups" ]; then
+#         echo "Moving current version of NixOS-Hyprland to backups directory."
+#         sudo mv "$HOME"/NixOS-Hyprland NixOS-Hyprland-backups/"$backupname"
+#         sleep 1
+#     else
+#         echo "$NOTE Creating the backups directory & moving NixOS-Hyprland to it."
+#         mkdir -p NixOS-Hyprland-backups
+#         sudo mv "$HOME"/NixOS-Hyprland NixOS-Hyprland-backups/"$backupname"
+#         sleep 1
+#     fi
+# else
+#     echo "$OK Thank you for choosing KooL's NixOS-Hyprland"
+# fi
+# 
+# echo "-----"
+# 
+# echo "$NOTE Cloning & Entering NixOS-Hyprland Repository"
+# git clone --depth 1 https://github.com/JaKooLit/NixOS-Hyprland.git ~/NixOS-Hyprland
 cd ~/NixOS-Hyprland || exit
 
 printf "\n%.0s" {1..2}
@@ -126,6 +126,14 @@ fi
 
 sed -i 's/keyboardLayout\s*=\s*"\([^"]*\)"/keyboardLayout = "'"$keyboardLayout"'"/' ./hosts/$hostName/variables.nix
 
+# Prompt for keyboard variant and save to variables.nix
+read -rp "$CAT Enter your keyboard variant: [ ] " keyboardVariant </dev/tty
+if [ -z "$keyboardVariant" ]; then
+    keyboardVariant=""
+fi
+
+sed -i 's/keyboardVariant\s*=\s*"\([^"]*\)"/keyboardVariant = "'"$keyboardVariant"'"/' ./hosts/$hostName/variables.nix
+
 # Timezone and console keymap
 if type nhl_prompt_timezone_console >/dev/null 2>&1; then
     nhl_prompt_timezone_console "$hostName" "$keyboardLayout"
@@ -162,7 +170,7 @@ done
 echo "-----"
 
 echo "$NOTE Setting Required Nix Settings Then Going To Install"
-git config --global user.name "installer"
+git config --global user.name $USER
 git config --global user.email "installer@gmail.com"
 git add .
 # Update host in flake.nix (first occurrence of host = "...")
@@ -221,56 +229,37 @@ fi
 echo "-----"
 printf "\n%.0s" {1..2}
 
-# Check for existing configs and copy if does not exist
-for DIR1 in gtk-3.0 Thunar xfce4; do
-    DIRPATH=~/.config/$DIR1
-    if [ -d "$DIRPATH" ]; then
-        echo -e "${NOTE} Config for $DIR1 found, no need to copy."
-    else
-        echo -e "${NOTE} Config for $DIR1 not found, copying from assets."
-        cp -r assets/$DIR1 ~/.config/ && echo "Copy $DIR1 completed!" || echo "Error: Failed to copy $DIR1 config files."
-    fi
-done
 
 echo "-----"
 printf "\n%.0s" {1..3}
 
 # Clean up
-# GTK Themes and Icons
-if [ -d "GTK-themes-icons" ]; then
-    echo "$NOTE GTK themes and Icons directory exist..deleting..."
-    rm -rf "GTK-themes-icons"
-fi
 
 echo "-----"
 printf "\n%.0s" {1..3}
 
-# Cloning Hyprland-Dots repo to home directory
-# KooL's Dots installation
-printf "$NOTE Downloading Hyprland-Dots to HOME directory..\n"
-if [ -d ~/Hyprland-Dots ]; then
-    cd ~/Hyprland-Dots
-    git stash
-    git pull
-    chmod +x copy.sh
-    ./copy.sh
-else
-    if git clone --depth 1 https://github.com/JaKooLit/Hyprland-Dots ~/Hyprland-Dots; then
-        cd ~/Hyprland-Dots || exit 1
-        chmod +x copy.sh
-        ./copy.sh
-    else
-        echo -e "$ERROR Can't download Hyprland-Dots"
-    fi
-fi
+# # Cloning Hyprland-Dots repo to home directory
+# # KooL's Dots installation
+# printf "$NOTE Downloading Hyprland-Dots to HOME directory..\n"
+# if [ -d ~/Hyprland-Dots ]; then
+#     cd ~/Hyprland-Dots
+#     git stash
+#     git pull
+#     chmod +x copy.sh
+#     ./copy.sh
+# else
+#     if git clone --depth 1 https://github.com/JaKooLit/Hyprland-Dots ~/Hyprland-Dots; then
+#         cd ~/Hyprland-Dots || exit 1
+#         chmod +x copy.sh
+#         ./copy.sh
+#     else
+#         echo -e "$ERROR Can't download Hyprland-Dots"
+#     fi
+# fi
 
 #return to NixOS-Hyprland
 cd ~/NixOS-Hyprland
 
-# copy fastfetch config if nixos.png is not present
-if [ ! -f "$HOME/.config/fastfetch/nixos.png" ]; then
-    cp -r assets/fastfetch "$HOME/.config/"
-fi
 
 printf "\n%.0s" {1..2}
 

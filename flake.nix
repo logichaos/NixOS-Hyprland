@@ -41,15 +41,35 @@
       # Helper function to create a NixOS configuration for a host
       mkHost = host:
         let
-          # Import the host's variables.nix to get the username
-          hostVars = import ./hosts/${host}/variables.nix;
-          username = hostVars.username;
+          # Import the list of users for this host
+          hostUsers = import ./hosts/${host}/host-users.nix;
+          
+          # Helper to create HM config for a single user
+          mkUserHMConfig = username: {
+            home.username = username;
+            home.homeDirectory = "/home/${username}";
+            home.stateVersion = "25.11";
+
+            # Import common HM modules, user-specific config, and common user config
+            imports = [
+              ./modules/home/default.nix      # Common programs (git, nvim, etc.) and dot-file linking
+              ./users/common/default.nix      # Shared across all users
+              ./users/${username}/default.nix # User-specific HM configuration
+            ];
+          };
+          
+          # Generate home-manager.users attrset for all users on this host
+          hmUsers = nixpkgs.lib.listToAttrs (
+            map (username: {
+              name = username;
+              value = mkUserHMConfig username;
+            }) hostUsers
+          );
         in
         nixpkgs.lib.nixosSystem {
           specialArgs = {
             inherit system;
             inherit inputs;
-            inherit username;
             inherit host;
           };
           modules = [
@@ -72,19 +92,11 @@
               home-manager.useUserPackages = true;
               home-manager.backupFileExtension = "hm-bak";
 
-              # Ensure HM modules can access flake inputs (e.g., inputs.nixvim)
-              home-manager.extraSpecialArgs = { inherit inputs system username host; };
+              # Ensure HM modules can access flake inputs
+              home-manager.extraSpecialArgs = { inherit inputs system host; };
 
-              home-manager.users.${username} = {
-                home.username = username;
-                home.homeDirectory = "/home/${username}";
-                home.stateVersion = "25.05";
-
-                # Import your copied HM modules
-                imports = [
-                  ./modules/home/default.nix
-                ];
-              };
+              # Configure Home Manager for all users on this host
+              home-manager.users = hmUsers;
             }
           ];
         };

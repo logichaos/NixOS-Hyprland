@@ -3,7 +3,6 @@
 
 { pkgs
 , host
-, username
 , options
 , ...
 }:
