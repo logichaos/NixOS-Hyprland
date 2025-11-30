@@ -222,6 +222,8 @@
     #  dataDir = "/home/${username}";
     #  configDir = "/home/${username}/.config/syncthing";
     #};
+    
+    fail2ban.enable = true;
 
   };
 
