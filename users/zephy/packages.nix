@@ -17,4 +17,9 @@ with pkgs; [
   jq                          # Required for NuGet operations in easy-dotnet
   azure-cli                   # Azure command-line interface
   azure-functions-core-tools  # Azure Functions development tools
+  
+
+  # office
+  freeoffice
+  libreoffice-qt-fresh
 ]

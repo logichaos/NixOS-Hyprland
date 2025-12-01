@@ -17,6 +17,9 @@ in {
         podman-tui
         podman-desktop
         podman-compose
+        docker-compose
+        kind
+        minikube
         nodejs
         ripgrep
         fd

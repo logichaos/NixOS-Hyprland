@@ -23,6 +23,7 @@
   # Add home-manager CLI
   home.packages = with pkgs; [
     home-manager
+    kubernetes
   ];
 }
 
