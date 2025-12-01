@@ -35,6 +35,28 @@
       fsType = "nfs";
     };
 
+  # NFS stuff
+  boot.supportedFilesystems = [ "nfs" ];
+  services.rpcbind.enable = true
+     
+  systemd.mounts = [{
+    type = "nfs";
+    mountConfig = {
+      Options = "noatime";
+    };
+    what = "blackhole:/volume1/infra-zephy";
+    where = "/home/zephy/share";
+  }];
+
+  systemd.automounts = [{
+    wantedBy = [ "multi-user.target" ];
+    automountConfig = {
+      TimeoutIdleSec = "600";
+    };
+    where = "/home/zephy/share";
+  }];
+
+
   swapDevices =
     [ { device = "/dev/disk/by-uuid/5c3ee7b1-89ff-4a74-b39f-fac8f15eef99"; }
     ];
