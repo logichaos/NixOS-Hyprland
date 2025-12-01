@@ -61,6 +61,24 @@ in
       XKB_DEFAULT_VARIANT = vars.keyboardVariant or "altgr-intl";
     };
 
+    # systemd.user.services."mnt-nfs-blackhole" = {
+    #   Unit = {
+    #     Description = "User-specific NFS mount from blackhole";
+    #     After = [ "network-online.target" ];
+    #     Wants = [ "network-online.target" ];
+    #   };
+    #   Service = {
+    #     ExecStart = "${pkgs.util-linux}/bin/mount -t nfs blackhole:/volume1/infra-zephy /mnt/zephy";
+    #     ExecStop = "${pkgs.util-linux}/bin/umount /mnt/zephy";
+    #     RemainAfterExit = true;
+    #     Type = "oneshot";
+    #   };
+    #   Install = {
+    #     WantedBy = [ "default.target" ];
+    #   };
+    # };
+
+
   };
 
   dotsPath = ./dots;

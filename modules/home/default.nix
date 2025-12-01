@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./common
     ./devtools
     ./terminals/tmux.nix
     ./terminals/ghostty.nix
