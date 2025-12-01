@@ -13,6 +13,10 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  # NFS stuff
+  boot.supportedFilesystems = [ "nfs" ];
+  services.rpcbind.enable = true;
+
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/f5c12375-5397-4feb-85f5-6aa0155aff08";
       fsType = "btrfs";
@@ -24,6 +28,23 @@
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
+    
+  systemd.mounts = [{
+    type = "nfs";
+    mountConfig = {
+      Options = "noatime";
+    };
+    what = "blackhole:/volume1/infra-zephy";
+    where = "/home/zephy/share";
+  }];
+
+  systemd.automounts = [{
+    wantedBy = [ "multi-user.target" ];
+    automountConfig = {
+      TimeoutIdleSec = "600";
+    };
+    where = "/home/zephy/share";
+  }];
 
   swapDevices =
     [ { device = "/dev/disk/by-uuid/2cd54b53-3ddf-44a3-8c22-eedd601cf7c5"; }
