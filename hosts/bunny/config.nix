@@ -262,6 +262,11 @@
 
   services.pulseaudio.enable = false; # stable branch
 
+  services.syncthing = {
+    enable = true;               # Enable the Syncthing service
+    openDefaultPorts = true;     # Open necessary ports in the firewall
+  };
+
   # Bluetooth
   hardware = {
     bluetooth = {
