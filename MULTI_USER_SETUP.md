@@ -19,8 +19,7 @@ NixOS-Hyprland/
 │   │   └── default.nix       # Common HM settings
 │   ├── zephy/                # Example user
 │   │   ├── default.nix       # User-specific HM config
-│   │   ├── variables.nix     # User variables (git, browser, etc.)
-│   │   └── dots/             # Optional: User-specific dot-file overrides
+│   │   └── variables.nix     # User variables (git, browser, etc.)
 │   └── default-user/         # Template user
 ├── hosts/                     # Host configurations
 │   ├── bunny/
@@ -32,7 +31,6 @@ NixOS-Hyprland/
 │   └── default/
 ├── modules/
 │   └── home/
-│       ├── link-dots.nix     # Shared dot-file linking module
 │       └── default.nix       # Common HM modules
 ├── hm-config/                 # Common dot-files for all users
 │   ├── hypr/
@@ -78,11 +76,6 @@ Each user has a directory in `users/<username>/` with:
   - Program configurations
   - Any other HM settings unique to this user
 
-- **`dots/` (optional)**: User-specific dot-file overrides
-  - Mirrors `hm-config/` structure
-  - Only include files you want to override
-  - Takes precedence over common configs
-
 ### 3. Host Variables
 
 Host-specific settings in `hosts/<hostname>/variables.nix`:
@@ -99,16 +92,6 @@ Host-specific settings in `hosts/<hostname>/variables.nix`:
 ```
 
 User-specific variables (git, browser, terminal) are now in `users/<username>/variables.nix`.
-
-### 4. Dot-File Linking
-
-The `modules/home/link-dots.nix` module:
-- Auto-detects repository location (`~/NixOS-Hyprland` or `~/Hyprland-Dots`)
-- Links `hm-config/` directories to `~/.config/`
-- Supports user-specific overrides from `users/<username>/dots/`
-- Uses out-of-store symlinks for live editing
-
-**Precedence**: `users/<username>/dots/` > `hm-config/`
 
 ### 5. Home Manager Integration
 
@@ -165,23 +148,6 @@ The flake automatically:
    sudo nixos-rebuild switch --flake .#hostname
    ```
 
-### Adding User-Specific Dot-File Overrides
-
-If a user needs different configs than the common ones:
-
-1. **Create user dots directory**:
-   ```bash
-   mkdir -p users/username/dots/hypr
-   ```
-
-2. **Add override files**:
-   ```bash
-   cp hm-config/hypr/hyprland.conf users/username/dots/hypr/
-   # Edit the user-specific version
-   ```
-
-3. **Rebuild** - the user's config will now use their override
-
 ### Using Standalone Home Manager
 
 For systems without NixOS:
@@ -191,14 +157,10 @@ cd hm-setup
 home-manager switch --flake .#zephy
 ```
 
-The standalone setup now uses the same:
-- User configurations from `../users/`
-- Dot-file linking from `../modules/home/link-dots.nix`
-- Common configs from `../hm-config/`
-
 ## Migration from Old Structure
 
 ### Old Way (Single User per Host)
+
 ```nix
 # hosts/bunny/variables.nix
 {
@@ -213,6 +175,7 @@ The standalone setup now uses the same:
 ### New Way (Multi-User)
 
 **Host variables** (`hosts/bunny/variables.nix`):
+
 ```nix
 {
   keyboardLayout = "us";
@@ -286,21 +249,6 @@ Hosts automatically load only the users listed in their `host-users.nix`, so you
 - Easily enable/disable users by editing one file
 
 ## Troubleshooting
-
-### Repository Not Found
-
-The `link-dots.nix` module auto-detects:
-1. `~/NixOS-Hyprland` (preferred)
-2. `~/Hyprland-Dots` (legacy fallback)
-
-If your repo is elsewhere, the symlinks won't work. Clone to one of these locations.
-
-### User-Specific Dots Not Working
-
-1. Check that `users/<username>/dots/` exists
-2. Verify the directory structure matches `hm-config/`
-3. Ensure files have correct permissions
-4. Rebuild Home Manager: `sudo nixos-rebuild switch --flake .#hostname`
 
 ### Missing User Variables
 

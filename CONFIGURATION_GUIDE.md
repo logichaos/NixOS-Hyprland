@@ -296,12 +296,6 @@ From **lowest** to **highest** priority:
 3. **All users** (`modules/home/default.nix`) - Shared user packages
 4. **User-specific** (`users/username/packages.nix`) - User overrides
 
-## 🎨 Dotfiles Management
-
-User dotfiles are managed through `modules/home/link-dots.nix` which overlays:
-- `users/common/dots/` - Shared dotfiles for all users
-- `users/username/dots/` - User-specific overrides (if they exist)
-
 ## 🤝 Multi-User Setup
 
 The system automatically:

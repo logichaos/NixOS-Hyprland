@@ -159,18 +159,6 @@ sed -i "s/terminal = \"[^\"]*\"/terminal = \"$userTerminal\"/" "users/$userName/
 sed -i "s/keyboardLayout = \"[^\"]*\"/keyboardLayout = \"$keyboardLayout\"/" "users/$userName/variables.nix"
 sed -i "s/keyboardVariant = \"[^\"]*\"/keyboardVariant = \"$keyboardVariant\"/" "users/$userName/variables.nix"
 
-# Copy .zshrc if user selected zsh as default shell
-if [ "$userShell" = "zsh" ]; then
-    if [ -f "assets/.zshrc" ]; then
-        echo "$NOTE Copying default .zshrc for zsh user..."
-        mkdir -p "users/$userName/dots"
-        cp "assets/.zshrc" "users/$userName/dots/.zshrc"
-        echo "$OK Default .zshrc copied to users/$userName/dots/.zshrc"
-    else
-        echo "$WARN assets/.zshrc not found, skipping..."
-    fi
-fi
-
 echo "$OK User configuration created successfully!"
 
 echo "-----"
