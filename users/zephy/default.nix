@@ -58,10 +58,10 @@ in
     # Keyboard settings for this user (Wayland/Hyprland)
     home.sessionVariables = {
       XKB_DEFAULT_LAYOUT = vars.keyboardLayout or "us";
-      XKB_DEFAULT_VARIANT = vars.keyboardVariant or "";
+      XKB_DEFAULT_VARIANT = vars.keyboardVariant or "altgr-intl";
     };
+
   };
 
-  # Optional path to user dot overrides (used by link-dots)
   dotsPath = ./dots;
 }

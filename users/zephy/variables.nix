@@ -16,6 +16,7 @@
     "video"
     "input"
     "audio"
+    "cdrom"
   ];
 
   # Program Preferences
