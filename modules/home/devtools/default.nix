@@ -14,7 +14,6 @@ in {
         dotnet10
         netcoredbg
         jetbrains.rider
-        podman
         podman-tui
         podman-desktop
         podman-compose
