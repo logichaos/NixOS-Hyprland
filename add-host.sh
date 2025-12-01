@@ -161,15 +161,10 @@ if [ ${#selected_users[@]} -eq 0 ] && [ "$create_new" != true ]; then
     create_new=true
 fi
 
-# Create host-users.nix
+# Create host-users.nix with all users (selected + new)
 echo "$NOTE Updating host-users.nix with selected users..."
-printf '[ ' > "./hosts/$hostName/host-users.nix"
-for user in "${selected_users[@]}"; do
-    printf '"%s" ' "$user" >> "./hosts/$hostName/host-users.nix"
-done
-printf ']\n' >> "./hosts/$hostName/host-users.nix"
 
-# Handle new user creation
+# Handle new user creation first to add to selected_users array
 if [ "$create_new" = true ]; then
     read -rp "$CAT Enter new username: " newUserName </dev/tty
     if [ -z "$newUserName" ]; then
@@ -200,14 +195,25 @@ if [ "$create_new" = true ]; then
         
         echo "$OK User $newUserName configured."
     fi
-    # Add new user to host-users.nix
-    if [ ${#selected_users[@]} -gt 0 ]; then
-        sed -i "s/]$/ \"$newUserName\" ]/" "./hosts/$hostName/host-users.nix"
-    else
-        printf '"%s" ' "$newUserName" >> "./hosts/$hostName/host-users.nix"
-        printf ']\n' >> "./hosts/$hostName/host-users.nix"
-    fi
+    # Add new user to selected_users array
+    selected_users+=("$newUserName")
 fi
+
+# Write host-users.nix with proper Nix list format
+{
+    echo "# Users enabled on this host"
+    printf "["
+    first=true
+    for user in "${selected_users[@]}"; do
+        if [ "$first" = true ]; then
+            printf ' "%s"' "$user"
+            first=false
+        else
+            printf ' "%s"' "$user"
+        fi
+    done
+    printf " ]\n"
+} > "./hosts/$hostName/host-users.nix"
 
 echo "$OK Host-users configuration updated."
 
